@@ -7,8 +7,6 @@ $dbconn = mysqli_connect($host,$user,$pwd,$sql_db);
 if(!$dbconn) {
     die("connection failed: " . mysqli_connect_error());
 }
-$tableheader = "<table border='1'><tr><th>Round Name</th><th>Total Arrows</th><th>Max Score</th></tr>";
-$tablefooter = "</table>";
 ?>
 
 <!DOCTYPE html>
@@ -38,12 +36,12 @@ $tablefooter = "</table>";
     <br><br>
      
     <button type="submit" name="action" value="list_all">See all rounds</button>
+    <br><br>
 
 </form>
 
 <?php
-
-if ($_SERVER['REQUETS_METHOD'] === 'POST')
+if ($_SERVER['REQUEST_METHOD'] === 'POST')
 {
     $action = $_POST['action'];
 
@@ -62,16 +60,16 @@ if ($_SERVER['REQUETS_METHOD'] === 'POST')
 //List all rounds names function
 function listAllRounds($dbconn)
 {
-    $query = "SELECT * FROM RoundTypes";
+    $query = "SELECT * FROM RoundTypes ORDER BY TotalArrows DESC, RoundName DESC";
     $result = $dbconn->query($query);
     // Table created to list all rounds
     if($result->num_rows > 0) {
-        echo $tableheader;
+        echo "<table border='1'><tr><th>Round Name</th><th>Total Arrows</th><th>Max Score</th></tr>";
         while($row = $result->fetch_assoc()) {
             $roundName = htmlspecialchars($row['RoundName']);
-            echo "<tr><td><a href='rounddetails.php?id=$roundName>{$roundName}</a></td><td>{$row['TotalArrows']}</td><td>{$row['MaxScore']}</td></tr>";
+            echo "<tr><td><a href='rounddetails.php?name=$roundName'>{$roundName}</a></td><td>{$row['TotalArrows']}</td><td>{$row['MaxScore']}</td></tr>";
         }
-        echo $tablefooter;} else {
+        echo "</table>";} else {
         echo "<p>No rounds found. There may be an issue with the SQL connection</p>";
     }   
 }
@@ -81,16 +79,17 @@ function listByRoundName($dbconn, $roundname)
 {
     //prepared statement to avoid SQL injection
     $stmt = $dbconn->prepare("SELECT * FROM RoundTypes WHERE RoundName LIKE ?");
-    $stmt->bind_param("s", $roundname);
+    $search = $roundname . '%';
+    $stmt->bind_param("s", $search);
     $stmt->execute();
     $result = $stmt->get_result();
-
-    if($reuslt->num_rows > 0) {
-        echo $tableheader;
+    if($result-> num_rows > 0) {
+        echo "<table border='1'><tr><th>Round Name</th><th>Total Arrows</th><th>Max Score</th></tr>";
         while($row = $result->fetch_assoc()) {
-            echo $tablerow;
+            $roundName = htmlspecialchars($row['RoundName']);
+            echo "<tr><td><a href='rounddetails.php?name=$roundName'>{$roundName}</a></td><td>{$row['TotalArrows']}</td><td>{$row['MaxScore']}</td></tr>";
         }
-        echo $tablefooter;}
+        echo "</table>";}
     else {
         echo "<p>No rounds found with a name: " . $roundname . "</p>";
     }

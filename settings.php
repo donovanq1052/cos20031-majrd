@@ -7,5 +7,3 @@ $host = "feenix-mariadb.swin.edu.au";
 $user = "s105260032";
 $pwd = "Lopeting@1"; /* don't steal my password please... */
 $sql_db = "s105260032_db";
-
-?>

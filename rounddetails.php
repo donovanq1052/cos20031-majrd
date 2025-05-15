@@ -1,6 +1,7 @@
 <?php
 
 require_once 'settings.php';
+$dbconn = mysqli_connect($host,$user,$pwd,$sql_db);
 
 // will redirect to roundsearch.php if user accesses this page without selecting a round
 if(isset($_GET['name'])) {
@@ -12,13 +13,11 @@ if(!$dbconn) {
     die("connection failed: " . mysqli_connect_error());
 }
 
-$dbconn = mysqli_connect($host,$user,$pwd,$sql_db);
-$roundQuery = "SELECT Distance, TotalArrows, TargetFace FROM RoundRanges WHERE RoundName = $roundName ORDER BY Distance";
-$result = $dbconn->query($roundQuery);
-
-$tableheader = "<table border='1'><tr><th>Distance</th><th>Total Arrows</th><th>Target Face</th></tr>";
-$tablefooter = "</table>";
-$tablerow = "<tr><td>{$row['Distance']}</td><td>{$row['TotalArrows']}</td><td>{$row['TargetFace']}</td></tr>";
+$roundQuery = "SELECT Distance, TotalArrows, TargetFace FROM RoundRanges WHERE RoundName = ? ORDER BY Distance DESC";
+$stmt = $dbconn->prepare($roundQuery);
+$stmt->bind_param("s", $roundName);
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -36,11 +35,11 @@ $tablerow = "<tr><td>{$row['Distance']}</td><td>{$row['TotalArrows']}</td><td>{$
     include_once 'header.inc';
     if($result->num_rows > 0) {
         echo "<h2>Round Details for {$roundName}</h2>";
-        echo $tableheader;
+        echo "<table border='1'><tr><th>Distance</th><th>Total Arrows</th><th>Target Face</th></tr>";
         while($row = $result->fetch_assoc()) {
-            echo $tablerow;
+            echo "<tr><td>{$row['Distance']}m</td><td>{$row['TotalArrows']}</td><td>{$row['TargetFace']}cm</td></tr>";
         }
-        echo $tablefooter;
+        echo "</table>";
     } else {
         // this should never happen
         echo "<p>No details for the round were found.</p>";
@@ -48,6 +47,6 @@ $tablerow = "<tr><td>{$row['Distance']}</td><td>{$row['TotalArrows']}</td><td>{$
     include_once 'footer.inc';
 ?>
 
-
+<h3><a href="roundsearch.php">View more rounds</a></h3>
 </body>
 </html>
