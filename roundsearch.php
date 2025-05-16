@@ -78,7 +78,7 @@ function listAllRounds($dbconn)
 function listByRoundName($dbconn, $roundname)
 {
     //prepared statement to avoid SQL injection
-    $stmt = $dbconn->prepare("SELECT * FROM RoundTypes WHERE RoundName LIKE ?");
+    $stmt = $dbconn->prepare("SELECT * FROM RoundTypes WHERE RoundName LIKE ? ORDER BY TotalArrows DESC, RoundName DESC");
     $search = $roundname . '%';
     $stmt->bind_param("s", $search);
     $stmt->execute();

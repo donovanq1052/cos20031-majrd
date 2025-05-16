@@ -99,7 +99,7 @@ if(!$input_correct)
         <input type='radio' name='targetface{$i}' id='targetface{$i}120' value='120'>
         <label for='targetface{$i}120'>120cm</label><br><br>
         <label for='totalarrows{$i}'>Total Arrows</label>
-        <input type='number' name='totalarrows{$i}' id='totalarrows{$i}'><br><br>";
+        <input type='number' name='totalarrows{$i}' id='totalarrows{$i}' required><br><br>";
     }
 ?>
     <button type="submit" name="action">Press here to create round</button>
