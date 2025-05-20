@@ -2,7 +2,7 @@
 
 require_once 'settings.php';
 
-$dbconn = mysqli_connect($host,$user,$pwd,$sql_db);
+$dbconn = mysqli_connect($host,$user,$pswd,$dbnm);
 
 if(!$dbconn) {
     die("connection failed: " . mysqli_connect_error());
