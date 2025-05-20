@@ -10,6 +10,7 @@ session_start();
     <meta name="description" content="Create your own custom round">
     <meta name="keywords" content="Archery, Database, Rounds, Search, Add">
     <meta name="author" content="Donovan Quilty">
+    <link rel="stylesheet" href="styles.css">
     <title>Add Round | MAJRD Archery</title>
 </head>
 <body>

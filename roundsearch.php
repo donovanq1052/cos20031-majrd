@@ -17,6 +17,7 @@ if(!$dbconn) {
     <meta name="description" content="Search through different rounds here, or create your own">
     <meta name="keywords" content="Archery, Database, Rounds, Search, Add">
     <meta name="author" content="Donovan Quilty">
+    <link rel="stylesheet" href="styles.css">
     <title>Rounds | MAJRD Archery</title>
 </head>
 <body>

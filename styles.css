@@ -1,0 +1,36 @@
+:root {
+    --primary-color: #3498db;
+    --background: white;
+    --secondary: black;
+    --accent: lightgrey;
+}
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    /* text-align: center; */
+}
+html {
+    display: grid;
+    grid-template-columns: 35fr 30fr 35fr;
+    grid-template-rows: auto 1fr auto;
+}
+header {
+}
+body {
+    margin: 0 auto;
+    grid-column: 2/3;
+    grid-row: 2/3;
+}
+h1 {
+    color: var(--primary-color);
+}
+.container {
+}
+button {
+}
+footer {
+}
