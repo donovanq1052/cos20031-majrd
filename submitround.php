@@ -2,7 +2,7 @@
 require_once 'settings.php';
 require_once 'sanitise_input.php';
 session_start();
-$dbconn = mysqli_connect($host,$user,$pwd,$sql_db);
+$dbconn = mysqli_connect($host,$user,$pswd,$dbnm);
 $input_correct = true;
 $_SESSION['msg'] = ""; // error message
 $distancearray = [];
