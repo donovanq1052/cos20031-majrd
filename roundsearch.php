@@ -67,8 +67,9 @@ function listAllRounds($dbconn)
     if($result->num_rows > 0) {
         echo "<table border='1'><tr><th>Round Name</th><th>Total Arrows</th><th>Max Score</th></tr>";
         while($row = $result->fetch_assoc()) {
+            $maxScore = $row['TotalArrows'] * 10;
             $roundName = htmlspecialchars($row['RoundName']);
-            echo "<tr><td><a href='rounddetails.php?name=$roundName'>{$roundName}</a></td><td>{$row['TotalArrows']}</td><td>{$row['TotalArrows'] * 10}</td></tr>";
+            echo "<tr><td><a href='rounddetails.php?name=$roundName'>{$roundName}</a></td><td>{$row['TotalArrows']}</td><td>{$maxScore}</td></tr>";
         }
         echo "</table>";} else {
         echo "<p>No rounds found. There may be an issue with the SQL connection</p>";
