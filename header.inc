@@ -3,5 +3,6 @@
     <nav>
         <a href="roundsearch.php"Search Rounds</a>
         <a href="roundadd.php">Add Round</a>
+        <a href="viewscores.php">View Scores</a>
     </nav>
 </header>
