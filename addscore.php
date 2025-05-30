@@ -15,7 +15,8 @@
 	$scoreadded = false;
 	$validarcher = false;
 	$validround = false;
-	$validcompetition = true;	
+	$validcompetition = true;
+	$insertfailure = false;	
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -52,6 +53,7 @@
 			$class = $_POST["class"];
 			$division = $_POST["division"];
 			$competition = $_POST["competition"];
+			$conn->query("START TRANSACTION");
 			if ($competition === "") {
 				$conn->query("INSERT INTO ShotRound (ArcherID, RoundName, Date, Division, Class, Verified) VALUES ('$archer', '$round', '$date', '$division', '$class', TRUE)");
 			} else {
@@ -70,13 +72,22 @@
 					for ($arrownum = 1; $arrownum <= 6; $arrownum++) {
 						$arrowscore[$arrownum] = $_POST["$rangenum-$endnum-$arrownum"];
 					}
-					$conn->query("INSERT INTO ShotEnd (ScoreID, RangeNum, EndNum, Arrow1, Arrow2, Arrow3, Arrow4, Arrow5, Arrow6, TotalEndScore, XTotal) 
-						VALUES ($round_id, $rangenum, $endnum, '$arrowscore[1]', '$arrowscore[2]', '$arrowscore[3]', '$arrowscore[4]', '$arrowscore[5]', '$arrowscore[6]', $endtotal, $xtotal)");
+					$insertEnd = "INSERT INTO ShotEnd (ScoreID, RangeNum, EndNum, Arrow1, Arrow2, Arrow3, Arrow4, Arrow5, Arrow6, TotalEndScore, XTotal) 
+						VALUES ($round_id, $rangenum, $endnum, '$arrowscore[1]', '$arrowscore[2]', '$arrowscore[3]', '$arrowscore[4]', '$arrowscore[5]', '$arrowscore[6]', $endtotal, $xtotal)";
+					if (!(mysqli_query($conn, $insertEnd))) {
+  						$insertfailure = true;
+					}
 				}
 				$rangenum += 1;
 				$range = mysqli_fetch_row($ranges);
 			}
-			$scoreadded = true;
+			if ($insertfailure) {
+				$conn->query("ROLLBACK");
+				$scoreadded = false;
+			} else {
+				$conn->query("COMMIT");
+				$scoreadded = true;
+			}
 		}
 	
 		if (isset($_POST["archerround"])) {
@@ -306,10 +317,16 @@
 					</form>";
 				# Archer/Round entry page:
 				} else {
-					if ($scoreadded) {
+					if (isset($_POST["roundscore"]) && $scoreadded) {
 						echo
 						"<div class='alert alert-success' role='alert'>
   							Score successfully added to database
+						</div>";
+					}
+					if (isset($_POST["roundscore"]) && !$scoreadded) {
+						echo
+						"<div class='alert alert-danger' role='alert'>
+  							Error adding score to database
 						</div>";
 					}
 					if (isset($_POST["archerround"]) && $validarcher==false) {
