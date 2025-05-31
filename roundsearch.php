@@ -1,6 +1,6 @@
 <?php
 
-require_once 'settings.php';
+require_once 'functions/settings.php';
 
 $dbconn = mysqli_connect($host,$user,$pswd,$dbnm);
 
