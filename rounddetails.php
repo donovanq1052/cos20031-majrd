@@ -13,7 +13,7 @@ if(!$dbconn) {
     die("connection failed: " . mysqli_connect_error());
 }
 
-$roundQuery = "SELECT Distance, TotalArrows, TargetFace FROM RoundRanges WHERE RoundName = ? ORDER BY Distance DESC";
+$roundQuery = "SELECT Distance, TotalArrows, TargetFace FROM RoundRange WHERE RoundName = ? ORDER BY Distance DESC";
 $stmt = $dbconn->prepare($roundQuery);
 $stmt->bind_param("s", $roundName);
 $stmt->execute();

@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
 //List all rounds names function
 function listAllRounds($dbconn)
 {
-    $query = "SELECT * FROM RoundTypes ORDER BY TotalArrows DESC, RoundName DESC";
+    $query = "SELECT * FROM RoundType ORDER BY TotalArrows DESC, RoundName DESC";
     $result = $dbconn->query($query);
     // Table created to list all rounds
     if($result->num_rows > 0) {
@@ -80,7 +80,7 @@ function listAllRounds($dbconn)
 function listByRoundName($dbconn, $roundname)
 {
     //prepared statement to avoid SQL injection
-    $stmt = $dbconn->prepare("SELECT * FROM RoundTypes WHERE RoundName LIKE ? ORDER BY TotalArrows DESC, RoundName DESC");
+    $stmt = $dbconn->prepare("SELECT * FROM RoundType WHERE RoundName LIKE ? ORDER BY TotalArrows DESC, RoundName DESC");
     $search = $roundname . '%';
     $stmt->bind_param("s", $search);
     $stmt->execute();
