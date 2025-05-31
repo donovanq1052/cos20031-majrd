@@ -80,7 +80,7 @@ mysqli_autocommit($dbconn, false);
 $all_good = true;
 $roundname_escaped = mysqli_real_escape_string($dbconn, $roundname);
 try{
-    $querybase = "INSERT INTO RoundTypes VALUES ('$roundname_escaped', $total_arrows, $max_score)";
+    $querybase = "INSERT INTO RoundType VALUES ('$roundname_escaped', $total_arrows, $max_score)";
     if(!mysqli_query($dbconn, $querybase)) {
         $all_good = false;
     }
@@ -88,7 +88,7 @@ try{
     for($i = 1; $i <= $ranges; $i++)
     {
         $targetface_escaped = mysqli_real_escape_string($dbconn, $targetfacearray[$i]);
-        $query[$i] = "INSERT INTO RoundRanges (RoundName, TargetFace, TotalArrows, Distance)
+        $query[$i] = "INSERT INTO RoundRange (RoundName, TargetFace, TotalArrows, Distance)
         VALUES ('$roundname_escaped', '$targetface_escaped', {$totalarrowsarray[$i]}, {$distancearray[$i]})";
 
         if(!mysqli_query($dbconn, $query[$i])) {
