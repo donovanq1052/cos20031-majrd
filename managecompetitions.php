@@ -45,8 +45,8 @@ $roundTypeQueryResult = $stmtb->get_result();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="View competitions here">
-    <meta name="keywords" content="Archery, Database, Competitions, View">
+    <meta name="description" content="View/Add competitions here">
+    <meta name="keywords" content="Archery, Database, Competitions, View, Add">
     <meta name="author" content="Donovan Quilty, Reeve Kariyawasam">
     <link rel="stylesheet" href="styles.css">
     <title>Manage Competitions | MAJRD Archery</title>
