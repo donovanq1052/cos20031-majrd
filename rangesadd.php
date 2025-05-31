@@ -1,5 +1,5 @@
 <?php
-require_once 'settings.php';
+require_once 'functions/settings.php';
 require_once 'sanitise_input.php';
 session_start();
 $dbconn = mysqli_connect($host,$user,$pswd,$dbnm);
