@@ -17,6 +17,11 @@ $stmt = $dbconn->prepare($competitionListQuery);
 $stmt->execute();
 $competitionListQueryResult = $stmt->get_result();
 
+// save another copy for checking against entered competition name
+$stmtC = $dbconn->prepare($competitionListQuery);
+$stmtC->execute();
+$competitionListQueryResultCheck = $stmtC->get_result();
+
 // query that gets the round types from a 'RoundType' table to show in drop
 // down list when creating a new competition.
 $roundTypeQuery = "SELECT * FROM RoundType ORDER BY RoundName";
@@ -43,23 +48,44 @@ $roundTypeQueryResult = $stmtb->get_result();
 ?>
 
 <h2>Manage Competitions</h2>
+<form method="post"><br>
+    <h3>Add a new competition:</h3><br>
+    <label for="competition-name">Name: </label>
+    <input type="text" name="competition-name" placeholder="Enter competition name"><br>
+    <label for="round-type">Round Type: </label>
+    <select name="round-type">
+    <?php   // creates dropdown menu containing types of rounds
+    echo "\t" . '<option value="">Please select</option>' . "\n";
+    printDropDownValues($roundTypeQueryResult);
+    ?>
+    </select><br><br>
+    
+    <button type="submit" name="action" value="create_competition">Create</button><br><br>
+</form>
 
 <?php
-    // text boxes and stuff to add a new competition. Doing it inside php block
-    echo "\n<br><h3>Add a new competition:</h3><br>";
-    echo "\n" . '<label for="competition-name">Name: </label>';
-    echo "\n" . '<input type="text" name="competition-name" placeholder="Enter competition name"><br>';
-    echo "\n" . '<label for="round-type">Round Type: </label>';
-    echo "\n" .'<select name="round-type">
-    <option value="">Please select</option>' . "\n";
-    printDropDownValues($roundTypeQueryResult);
-    echo "</select><br><br>\n";
+    // the submit logic:
+    if ($_SERVER['REQUEST_METHOD'] === 'POST')
+    {
+        // print out the competition name entered:
+        echo "entered name: " . $_POST['competition-name'] . "<br><br>\n";
 
-    // here, on submit, we will check if entered competition name is unique etc.
-    echo '<button type="submit" name="action" value="search_by_roundname">Create</button>';
-    echo '<br><br>';
+        while($query = $competitionListQueryResultCheck->fetch_assoc()) {
+            if ($_POST['competition-name'] == $query['CompetitionName']) {
+                echo "similar comp exists already<br>";
+            }
+            //echo "\t\t<tr><td>{$query['CompetitionName']}</td></tr><br>\n";
+        }
 
-    // lists existing competitions in a table.
+        /*
+        echo "POSTING NOW";
+        header('Location: viewcompetitions.php');
+        exit;
+        */
+    }
+
+
+    // lists existing competitions in a table. doing it in php block entirely
     // [to add]: submit button above refreshes page, thereby refreshing table w/ new
     if ($competitionListQueryResult->num_rows > 0) {
         echo "\n\n<h3>Existing Competitions:</h3><br>";
@@ -72,6 +98,8 @@ $roundTypeQueryResult = $stmtb->get_result();
         echo "<p>No competitions were found!</p>";
         echo '<br>';
     }
+
+    mysqli_close($dbconn);
 
 // prints a singular row for the table above. filling in competition name and
 // the associated round type for that competition.
@@ -89,7 +117,7 @@ function printDropDownValues($roundTypeQueryResult) {
             $t_arrows = $row['TotalArrows'];
             
             // each dropdown item is created here:
-            echo "\t";
+            echo "\t\t";
             echo '<option value="';
             echo $r_name;
             echo '" selected="selected">';
