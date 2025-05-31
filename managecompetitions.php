@@ -1,12 +1,22 @@
 <?php
-
-// competition name unique
-// round name should be from the ones created in the roundtype table
-
 require_once 'functions/settings.php';
+require_once 'functions/sanitise_input.php';
+session_start();    // don't know where to end this rip
+
+// NOTE: $err_state simply tracks whether the current session has been
+// redirected to, by itself, due to an error. If so, we show the error and
+// unset $err_state.
+if (isset($_SESSION['err_state'])) {
+    if ($_SESSION['err_state'] == true) {
+        $err_state = true;
+    } else {
+        $err_state = false;
+    }
+} else {
+    $err_state = false;
+}
 
 $dbconn = mysqli_connect($host,$user,$pswd,$dbnm);
-
 if(!$dbconn) {
     die("connection failed: " . mysqli_connect_error());
 }
@@ -39,7 +49,7 @@ $roundTypeQueryResult = $stmtb->get_result();
     <meta name="keywords" content="Archery, Database, Competitions, View">
     <meta name="author" content="Donovan Quilty, Reeve Kariyawasam">
     <link rel="stylesheet" href="styles.css">
-    <title>View Competitions | MAJRD Archery</title>
+    <title>Manage Competitions | MAJRD Archery</title>
 </head>
 <body>
 
@@ -59,32 +69,66 @@ $roundTypeQueryResult = $stmtb->get_result();
     printDropDownValues($roundTypeQueryResult);
     ?>
     </select><br><br>
+
+    <?php
+    // we show an error message if this page has been redirected to after a
+    // failed attempt to create a competition (if the entered competition name
+    // already existed)
+    if ($err_state == true && isset($_SESSION['duplicate-competition-name'])) {
+        echo "<h6>A competition with the name '" . $_SESSION['duplicate-competition-name'] . "' already exists</h6><br>";
+    } else if ($err_state == true && !(isset($_SESSION['duplicate-competition-name']))) {
+        echo "<h6>Oh no! Something went wrong!</h6>'";
+    }
+    ?>
     
-    <button type="submit" name="action" value="create_competition">Create</button><br><br>
+    <button type="submit" name="create_button">Create</button><br><br>
 </form>
 
 <?php
-    // the submit logic:
-    if ($_SERVER['REQUEST_METHOD'] === 'POST')
-    {
-        // print out the competition name entered:
-        echo "entered name: " . $_POST['competition-name'] . "<br><br>\n";
+    // SUBMIT LOGIC (try to make this happen only if 'Create' button is pressed):
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_button'])) {
+        $comp_name = sanitise_input($_POST['competition-name']);
+        $round_type_name = sanitise_input($_POST['round-type']);
 
+        // loop through the existing competition names and see if the entered
+        // name already exists. if so, refresh with $err_state set
         while($query = $competitionListQueryResultCheck->fetch_assoc()) {
             if ($_POST['competition-name'] == $query['CompetitionName']) {
-                echo "similar comp exists already<br>";
+                // we set sesh var w/ dupl. comp name to show user on refresh
+                $_SESSION['duplicate-competition-name'] = $_POST['competition-name'];
+                $_SESSION['err_state'] = true;
+
+                // and we redirect
+                header('Location: managecompetitions.php');   // and we refresh
+                exit;
             }
-            //echo "\t\t<tr><td>{$query['CompetitionName']}</td></tr><br>\n";
         }
 
-        /*
-        echo "POSTING NOW";
-        header('Location: viewcompetitions.php');
-        exit;
-        */
+        // if no duplicates are found, and if both competition-name and
+        // round-names are set, then we build a query and try push to db
+        if ($_POST['competition-name'] != "" && $_POST['round-type'] != "") {
+            $insert_competition_entry_query = "INSERT INTO competition (
+                CompetitionName,
+                RoundName
+                )
+                VALUES(
+                    '$comp_name',
+                    '$round_type_name'
+                )";
+
+            // and in to the db it goes!
+            $result = mysqli_query($dbconn, $insert_competition_entry_query);
+
+            // refresh the page and the table should update!?!?!
+            if (!$result) {
+                $_SESSION['err_state'] = true;
+            } else {
+                header('Location: managecompetitions.php');   // and we refresh
+            }
+        }
     }
 
-
+    // TABLE BIT
     // lists existing competitions in a table. doing it in php block entirely
     // [to add]: submit button above refreshes page, thereby refreshing table w/ new
     if ($competitionListQueryResult->num_rows > 0) {
@@ -118,9 +162,7 @@ function printDropDownValues($roundTypeQueryResult) {
             
             // each dropdown item is created here:
             echo "\t\t";
-            echo '<option value="';
-            echo $r_name;
-            echo '" selected="selected">';
+            echo '<option value="' . $r_name . '">';
             echo $r_name . " - ". strval($t_arrows) . " arrows";
             echo '</option>';
             echo "\n";
@@ -130,7 +172,12 @@ function printDropDownValues($roundTypeQueryResult) {
         echo "<br><p>Oh no, no types of rounds were found on our end!</p><br>";
     }
 }
+?>
 
+<?php
+// we unset the $err_state if we successfully reach the bottom of the document
+$_SESSION['err_state'] = false;
+$err_state = false;
 ?>
 
 <?php
