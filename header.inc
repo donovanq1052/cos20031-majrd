@@ -1,10 +1,24 @@
 <header>
-    <h1>MAJRD Database Design Project</h1>
+    <h1>MAJRD Database</h1>
     <nav>
-        <a href="roundsearch.php">Search Rounds</a>
-        <a href="roundadd.php">Add Round</a><br>
-        <a href="viewscores.php">View Scores</a><br>
-        <a href="managecompetitions.php">Manage Competitions</a><br>
-        <a href="managearchers.php">Manage Archers</a>
+        <div class="hyperlink-container">
+            <a href="roundsearch.php">Search</a>
+        </div>
+
+        <div class="hyperlink-container">
+            <a href="roundadd.php">Add</a>
+        </div>
+
+        <div class="hyperlink-container">
+            <a href="viewscores.php">Scores</a>
+        </div>
+
+        <div class="hyperlink-container">
+            <a href="managecompetitions.php">Competitions</a>
+        </div>
+
+        <div class="hyperlink-container">
+            <a href="managearchers.php">Archers</a>
+        </div>
     </nav>
 </header>
