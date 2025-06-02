@@ -1,6 +1,6 @@
 <?php
 require_once 'functions/settings.php';
-require_once 'sanitise_input.php';
+require_once 'functions/sanitise_input.php';
 session_start();
 $dbconn = mysqli_connect($host,$user,$pswd,$dbnm);
 $input_correct = true;
@@ -12,7 +12,7 @@ if(!isset($_POST['roundname']) || $_POST['roundname'] === "")
     $input_correct = false;
 } else
 {
-    $query = "SELECT RoundName FROM RoundTypes";
+    $query = "SELECT RoundName FROM RoundType";
     $result = $dbconn->query($query);
     while($row = $result->fetch_assoc()) {
         if(strtolower($row['RoundName']) === strtolower($_POST['roundname']))

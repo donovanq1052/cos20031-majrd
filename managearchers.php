@@ -59,7 +59,6 @@ $archerIDListQueryResult = $stmtc->get_result();
         <label for="archer-id">Archer ID: </label>
         <input type="text" name="archer-id" placeholder="Enter unique 11 digit ID" 
         pattern="^[0-9]*$" minlength="11" maxlength="11" required><br>
-        <h6>To remove. DB structure needs slight update first.</h6><br>
 
         <label for="fname">First Name: </label>
         <input type="text" name="fname" placeholder="Enter your first given name"
